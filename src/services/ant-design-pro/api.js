@@ -5,10 +5,15 @@ import { request } from 'umi';
 /** 获取当前的用户 GET /api/currentUser */
 
 export async function currentUser(options) {
-  return request('/api/currentUser', {
-    method: 'GET',
-    ...(options || {}),
-  });
+  return {
+    success: true,
+    data: {
+      name: 'admin',
+      userid: '00000001',
+      email: 'antdesign@alipay.com',
+      access: 'admin',
+    }
+  };
 }
 /** 退出登录接口 POST /api/login/outLogin */
 
