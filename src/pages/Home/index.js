@@ -30,7 +30,7 @@ export default () => {
           {routes.map((route) => (
             <Link key={route.to} to={route.to} className={styles.link}>
               {route.icon}
-              <Title level={2}>{route.label}</Title>
+              <Title level={2} className={styles['link-title']}>{route.label}</Title>
             </Link>
           ))}
         </Space>
