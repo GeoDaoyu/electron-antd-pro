@@ -3,6 +3,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+const isDev = process.env.UMI_ENV === 'dev';
 
 const createWindow = () => {
   // Create the browser window.
@@ -14,11 +15,14 @@ const createWindow = () => {
     },
   });
 
-  // 加载 index.html
-  mainWindow.loadURL('http://localhost:8000');
-
-  // 打开开发工具
-  // mainWindow.webContents.openDevTools()
+  if (isDev) {
+    // 加载 index.html
+    mainWindow.loadURL('http://localhost:8000');
+    // 打开开发工具
+    // mainWindow.webContents.openDevTools()
+  } else {
+    mainWindow.loadFile(`${__dirname}/index.html`);
+  }
 };
 
 // 这段程序将会在 Electron 结束初始化
