@@ -166,9 +166,8 @@ export default () => {
             }}
           >
             <DraggerUpload />
-            {/* <ProFormUploadButton label="upload" name="upload" action="upload.do" /> */}
           </StepsForm.StepForm>
-          <StepsForm.StepForm
+          {/* <StepsForm.StepForm
             name="out"
             title="输出文件"
             onFinish={async () => {
@@ -255,7 +254,7 @@ export default () => {
                 ]}
               />
             </Form.Item>
-          </StepsForm.StepForm>
+          </StepsForm.StepForm> */}
         </StepsForm>
       </Content>
     </Layout>
