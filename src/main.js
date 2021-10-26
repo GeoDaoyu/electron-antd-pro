@@ -19,7 +19,7 @@ const createWindow = () => {
     // 加载 index.html
     mainWindow.loadURL('http://localhost:8000');
     // 打开开发工具
-    // mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(`${__dirname}/index.html`);
   }

@@ -5,6 +5,7 @@ import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import { EllipsisOutlined, QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { message, Layout, Form, Tooltip, Dropdown, Menu, Input, Button } from 'antd';
 import styles from './index.less';
+import DraggerUpload from '@/components/DraggerUpload';
 
 const { Content } = Layout;
 
@@ -156,7 +157,7 @@ export default () => {
           }}
         >
           <StepsForm.StepForm
-            name="base"
+            name="file"
             title="选择文件"
             onFinish={async () => {
               console.log(formRef.current?.getFieldsValue());
@@ -164,7 +165,8 @@ export default () => {
               return true;
             }}
           >
-            <ProFormUploadButton label="upload" name="upload" action="upload.do" />
+            <DraggerUpload />
+            {/* <ProFormUploadButton label="upload" name="upload" action="upload.do" /> */}
           </StepsForm.StepForm>
           <StepsForm.StepForm
             name="out"
