@@ -4,7 +4,7 @@
   "author": "zhanggy",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
-  "main": "dist/main.js",
+  "main": "src/main.js",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",

@@ -1,7 +1,7 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const isDev = process.env.UMI_ENV === 'dev';
 
@@ -23,6 +23,8 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(`${__dirname}/index.html`);
   }
+
+  Menu.setApplicationMenu(null);
 };
 
 // 这段程序将会在 Electron 结束初始化
