@@ -72,4 +72,7 @@ export default defineConfig({
   // mfsu: {},
   // webpack5: {},
   exportStatic: {},
+  define: {
+    API_URL: 'http://localhost:8099/file-encrypt-offline-service/api', // API地址
+  },
 });

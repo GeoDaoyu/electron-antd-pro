@@ -1,12 +1,11 @@
 import { useRef, useState } from 'react';
 import { history } from 'umi';
-import ProForm, { StepsForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
-import ProTable, { TableDropdown } from '@ant-design/pro-table';
-import { EllipsisOutlined, QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { message, Layout, Form, Tooltip, Dropdown, Menu, Input, Button } from 'antd';
+import { StepsForm } from '@ant-design/pro-form';
+import { Layout, Form } from 'antd';
 import styles from './index.less';
 import DraggerUpload from '@/components/DraggerUpload';
 import SaveFile from '@/components/SaveFile';
+import ConfigFeaturesTable from '@/components/ConfigFeaturesTable';
 
 const { Content } = Layout;
 
@@ -60,87 +59,14 @@ export default () => {
             }}
           >
             <Form.Item name="outputFileUrl" rules={[{ required: true }]}>
-              <SaveFile />
+              <SaveFile type="shp" />
             </Form.Item>
           </StepsForm.StepForm>
-          {/* <StepsForm.StepForm name="data" title="配置数据">
-            <Form.Item label="Username" name="username">
-              <ProTable
-                style={{ width: '800px' }}
-                columns={columns}
-                request={(params, sorter, filter) => {
-                  console.log(params, sorter, filter);
-                  return Promise.resolve({
-                    data: tableListDataSource,
-                    success: true,
-                  });
-                }}
-                search={false}
-                rowKey="key"
-                pagination={{
-                  showQuickJumper: true,
-                }}
-                dateFormatter="string"
-                toolbar={{
-                  title: '高级表格',
-                  tooltip: '这是一个标题提示',
-                }}
-                toolBarRender={() => [
-                  <Button key="danger" danger>
-                    危险按钮
-                  </Button>,
-                  <Button key="show">查看日志</Button>,
-                  <Button type="primary" key="primary">
-                    创建应用
-                  </Button>,
-                  <Dropdown key="menu" overlay={menu}>
-                    <Button>
-                      <EllipsisOutlined />
-                    </Button>
-                  </Dropdown>,
-                ]}
-              />
+          <StepsForm.StepForm name="data" title="配置数据">
+            <Form.Item name="filterFeatures">
+              <ConfigFeaturesTable path={formStore.inputFileUrl} />
             </Form.Item>
           </StepsForm.StepForm>
-          <StepsForm.StepForm name="field" title="配置字段">
-            <Form.Item label="Username" name="username">
-              <ProTable
-                style={{ width: '800px' }}
-                columns={columns}
-                request={(params, sorter, filter) => {
-                  console.log(params, sorter, filter);
-                  return Promise.resolve({
-                    data: tableListDataSource,
-                    success: true,
-                  });
-                }}
-                search={false}
-                rowKey="key"
-                pagination={{
-                  showQuickJumper: true,
-                }}
-                dateFormatter="string"
-                toolbar={{
-                  title: '高级表格',
-                  tooltip: '这是一个标题提示',
-                }}
-                toolBarRender={() => [
-                  <Button key="danger" danger>
-                    危险按钮
-                  </Button>,
-                  <Button key="show">查看日志</Button>,
-                  <Button type="primary" key="primary">
-                    创建应用
-                  </Button>,
-                  <Dropdown key="menu" overlay={menu}>
-                    <Button>
-                      <EllipsisOutlined />
-                    </Button>
-                  </Dropdown>,
-                ]}
-              />
-            </Form.Item>
-          </StepsForm.StepForm> */}
         </StepsForm>
       </Content>
     </Layout>

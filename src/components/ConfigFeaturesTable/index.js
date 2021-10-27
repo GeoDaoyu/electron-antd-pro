@@ -1,13 +1,15 @@
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import { EllipsisOutlined, QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { message, Layout, Form, Tooltip, Dropdown, Menu, Input, Button } from 'antd';
+import { useEffect } from 'react';
+import { getFeatures } from './service';
 
 /**
  * custom form item
  * 配置数据
  * value和onChange是表单必须的参数，由antd传参
  */
-export default ({ value, onChange }) => {
+export default ({ value, onChange, path }) => {
   const valueEnum = {
     0: 'close',
     1: 'running',
@@ -128,6 +130,17 @@ export default ({ value, onChange }) => {
       <Menu.Item key="3">3rd item</Menu.Item>
     </Menu>
   );
+
+  useEffect(() => {
+    if (path) {
+      getFeatures({ path }).then((response) => {
+        console.log(response);
+
+        // const data = response?.page?.data;
+        // setAppList(data.filter((item) => defaultApps.includes(item.name)));
+      });
+    }
+  }, [path]);
   return (
     <ProTable
       style={{ width: '800px' }}
