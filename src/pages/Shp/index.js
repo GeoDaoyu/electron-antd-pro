@@ -165,7 +165,9 @@ export default () => {
               return true;
             }}
           >
-            <DraggerUpload />
+            <Form.Item name="fileUrl">
+              <DraggerUpload type="shp" />
+            </Form.Item>
           </StepsForm.StepForm>
           {/* <StepsForm.StepForm
             name="out"

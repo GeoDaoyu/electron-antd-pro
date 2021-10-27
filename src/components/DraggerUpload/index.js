@@ -1,14 +1,22 @@
-import { Form } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
-export default () => {
-  const fileText = useState('');
+/**
+ * custom form item
+ * value和onChange是表单必须的参数，由antd传参
+ * type是控制文件过滤，有我传参，枚举值['shp', 'gdb']
+ */
+export default ({ value, onChange, type }) => {
+  const [fileText, setFileText] = useState(value);
   const onClick = () => {
     const { ipcRenderer } = window.electron;
-    ipcRenderer.send('openFile');
-    ipcRenderer.once('filePaths', (event, data) => {
-      console.log(data);
+    ipcRenderer.send('openFile', type);
+    ipcRenderer.once('filePaths', (event, filePaths) => {
+      const len = filePaths?.length;
+      if (len) {
+        setFileText(filePaths[len - 1]);
+        onChange(filePaths[len - 1]);
+      }
     });
   };
   const onDragOver = (e) => {
@@ -18,14 +26,20 @@ export default () => {
   const onDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    const filePaths = [];
     for (const file of e.dataTransfer.files) {
       const { path } = file;
-      console.log(path);
+      filePaths.push(path);
+    }
+    const len = filePaths?.length;
+    if (len) {
+      setFileText(filePaths[len - 1]);
+      onChange(filePaths[len - 1]);
     }
   };
 
   return (
-    <Form.Item name="fileUrl">
+    <div className="ant-upload">
       <div
         className="ant-upload ant-upload-drag"
         onClick={onClick}
@@ -41,7 +55,7 @@ export default () => {
           </div>
         </span>
       </div>
-      {/* <div className="ant-upload-list ant-upload-list-text">
+      <div className="ant-upload-list ant-upload-list-text">
         <div className="ant-upload-list-text-container">
           <div className="ant-upload-list-item ant-upload-list-item-done ant-upload-list-item-list-type-text">
             <div className="ant-upload-list-item-info">
@@ -51,7 +65,7 @@ export default () => {
             </div>
           </div>
         </div>
-      </div> */}
-    </Form.Item>
+      </div>
+    </div>
   );
 };
