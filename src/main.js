@@ -37,8 +37,25 @@ ipcMain.on('openFile', (event, arg) => {
     .showOpenDialog({
       filters: [{ name: map.get(arg), extensions: [arg] }],
     })
-    .then((result) => {
-      event.sender.send('filePaths', result.filePaths);
+    .then(({ canceled, filePaths }) => {
+      if (!canceled) {
+        event.sender.send('openFilePaths', filePaths);
+      }
+    });
+});
+ipcMain.on('saveFile', (event, arg) => {
+  const map = new Map([
+    ['shp', 'Shpfile'],
+    ['gdb', 'GeoDatabase'],
+  ]);
+  dialog
+    .showSaveDialog({
+      filters: [{ name: map.get(arg), extensions: [arg] }],
+    })
+    .then(({ canceled, filePath }) => {
+      if (!canceled) {
+        event.sender.send('saveFilePath', filePath);
+      }
     });
 });
 

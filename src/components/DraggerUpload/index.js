@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 /**
  * custom form item
+ * 获取本地文件绝对路径
  * value和onChange是表单必须的参数，由antd传参
  * type是控制文件过滤，有我传参，枚举值['shp', 'gdb']
  */
@@ -11,7 +12,7 @@ export default ({ value, onChange, type }) => {
   const onClick = () => {
     const { ipcRenderer } = window.electron;
     ipcRenderer.send('openFile', type);
-    ipcRenderer.once('filePaths', (event, filePaths) => {
+    ipcRenderer.once('openFilePaths', (event, filePaths) => {
       const len = filePaths?.length;
       if (len) {
         setFileText(filePaths[len - 1]);
