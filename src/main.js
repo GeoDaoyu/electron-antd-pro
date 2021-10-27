@@ -1,19 +1,20 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, ipcRenderer } = require('electron');
 const path = require('path');
 const isDev = process.env.UMI_ENV === 'dev';
 
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       webSecurity: false,
+      contextIsolation: false,
     },
   });
 
@@ -32,6 +33,12 @@ const createWindow = () => {
 
   Menu.setApplicationMenu(null);
 };
+
+ipcMain.on('openFile', (event) => {
+  dialog.showOpenDialog({}).then((result) => {
+    event.sender.send('filePaths', result.filePaths);
+  });
+});
 
 // 这段程序将会在 Electron 结束初始化
 // 和创建浏览器窗口的时候调用
