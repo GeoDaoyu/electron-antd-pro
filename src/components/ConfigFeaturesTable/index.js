@@ -1,8 +1,45 @@
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import { EllipsisOutlined, QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { message, Layout, Form, Tooltip, Dropdown, Menu, Input, Button } from 'antd';
-import { useEffect } from 'react';
-import { getFeatures } from './service';
+import { useEffect, useState, useCallback } from 'react';
+import { getFeatures, getFieldsInfo } from './service';
+import { filter, map, pipe, fromPairs, addIndex, tap } from 'ramda';
+
+const mapIndexed = addIndex(map);
+/**
+ * 生成列配置
+ * @param {Array} fields 属性数组
+ * @returns {Array} columns
+ */
+const genColumns = map(({ fieldName }) => {
+  const defaultProps = {
+    title: fieldName,
+    dataIndex: fieldName,
+  };
+  const excludeProps = {};
+  if (fieldName === 'the_geom') {
+    excludeProps.hideInTable = true;
+  }
+  return {
+    ...defaultProps,
+    ...excludeProps,
+  };
+});
+
+/**
+ * 生成可控的列配置
+ * @param {Array} fields 属性数组
+ * @returns {Object} columnsStateMap
+ */
+const genColumnsStateMap = pipe(
+  mapIndexed(({ fieldName }, index) => {
+    if (index <= 4) {
+      return [fieldName, { show: true }];
+    }
+    return [fieldName, { show: false }];
+  }),
+  fromPairs,
+);
 
 /**
  * custom form item
@@ -10,134 +47,14 @@ import { getFeatures } from './service';
  * value和onChange是表单必须的参数，由antd传参
  */
 export default ({ value, onChange, path }) => {
-  const valueEnum = {
-    0: 'close',
-    1: 'running',
-    2: 'online',
-    3: 'error',
-  };
-
-  const tableListDataSource = [];
-
-  const creators = ['付小小', '曲丽丽', '林东东', '陈帅帅', '兼某某'];
-
-  for (let i = 0; i < 5; i += 1) {
-    tableListDataSource.push({
-      key: i,
-      name: 'AppName',
-      containers: Math.floor(Math.random() * 20),
-      creator: creators[Math.floor(Math.random() * creators.length)],
-      status: valueEnum[Math.floor(Math.random() * 10) % 4],
-      createdAt: Date.now() - Math.floor(Math.random() * 2000),
-      money: Math.floor(Math.random() * 2000) * i,
-      progress: Math.ceil(Math.random() * 100) + 1,
-      memo: i % 2 === 1 ? '很长很长很长很长很长很长很长的文字要展示但是要留下尾巴' : '简短备注文案',
-    });
-  }
-
-  const columns = [
-    {
-      title: '排序',
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
-      title: '应用名称',
-      dataIndex: 'name',
-      render: (_) => <a>{_}</a>,
-      // 自定义筛选项功能具体实现请参考 https://ant.design/components/table-cn/#components-table-demo-custom-filter-panel
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input style={{ width: 188, marginBottom: 8, display: 'block' }} />
-        </div>
-      ),
-      filterIcon: (filtered) => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
-    },
-    {
-      title: '创建者',
-      dataIndex: 'creator',
-      valueEnum: {
-        all: { text: '全部' },
-        付小小: { text: '付小小' },
-        曲丽丽: { text: '曲丽丽' },
-        林东东: { text: '林东东' },
-        陈帅帅: { text: '陈帅帅' },
-        兼某某: { text: '兼某某' },
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      initialValue: 'all',
-      filters: true,
-      onFilter: true,
-      valueEnum: {
-        all: { text: '全部', status: 'Default' },
-        close: { text: '关闭', status: 'Default' },
-        running: { text: '运行中', status: 'Processing' },
-        online: { text: '已上线', status: 'Success' },
-        error: { text: '异常', status: 'Error' },
-      },
-    },
-    {
-      title: (
-        <>
-          创建时间
-          <Tooltip placement="top" title="这是一段描述">
-            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-          </Tooltip>
-        </>
-      ),
-      width: 140,
-      key: 'since',
-      dataIndex: 'createdAt',
-      valueType: 'date',
-      sorter: (a, b) => a.createdAt - b.createdAt,
-    },
-    {
-      title: '备注',
-      dataIndex: 'memo',
-      ellipsis: true,
-      copyable: true,
-    },
-    {
-      title: '操作',
-      width: 180,
-      key: 'option',
-      valueType: 'option',
-      render: () => [
-        <a key="link">链路</a>,
-        <a key="link2">报警</a>,
-        <a key="link3">监控</a>,
-        <TableDropdown
-          key="actionGroup"
-          menus={[
-            { key: 'copy', name: '复制' },
-            { key: 'delete', name: '删除' },
-          ]}
-        />,
-      ],
-    },
-  ];
-
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">1st item</Menu.Item>
-      <Menu.Item key="2">2nd item</Menu.Item>
-      <Menu.Item key="3">3rd item</Menu.Item>
-    </Menu>
-  );
+  const [columns, setColumns] = useState([]);
+  const [columnsStateMap, setColumnsStateMap] = useState({});
 
   useEffect(() => {
     if (path) {
-      getFeatures({ path }).then((response) => {
-        console.log(response);
-
-        // const data = response?.page?.data;
-        // setAppList(data.filter((item) => defaultApps.includes(item.name)));
+      getFieldsInfo({ path }).then(({ fgdbfieldDetailInfos }) => {
+        setColumns(genColumns(fgdbfieldDetailInfos));
+        setColumnsStateMap(genColumnsStateMap(fgdbfieldDetailInfos));
       });
     }
   }, [path]);
@@ -145,37 +62,32 @@ export default ({ value, onChange, path }) => {
     <ProTable
       style={{ width: '800px' }}
       columns={columns}
-      request={(params, sorter, filter) => {
-        console.log(params, sorter, filter);
+      params={{ path }}
+      request={async (params, sorter, filter) => {
+        if (params.path) {
+          return getFeatures(params);
+        }
         return Promise.resolve({
-          data: tableListDataSource,
+          data: [],
           success: true,
         });
       }}
       search={false}
-      rowKey="key"
+      rowKey="id"
       pagination={{
         showQuickJumper: true,
+        pageSize: 5,
+        pageSizeOptions: [5, 10, 20, 50, 100],
       }}
       dateFormatter="string"
       toolbar={{
-        title: '高级表格',
-        tooltip: '这是一个标题提示',
+        title: '配置数据',
+        tooltip: '在这里配置数据的可见性',
       }}
-      toolBarRender={() => [
-        <Button key="danger" danger>
-          危险按钮
-        </Button>,
-        <Button key="show">查看日志</Button>,
-        <Button type="primary" key="primary">
-          创建应用
-        </Button>,
-        <Dropdown key="menu" overlay={menu}>
-          <Button>
-            <EllipsisOutlined />
-          </Button>
-        </Dropdown>,
-      ]}
+      columnsState={{
+        value: columnsStateMap,
+        onChange: setColumnsStateMap,
+      }}
     />
   );
 };
