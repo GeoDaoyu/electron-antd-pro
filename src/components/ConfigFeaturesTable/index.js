@@ -1,30 +1,11 @@
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import { EllipsisOutlined, QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { message, Layout, Form, Tooltip, Dropdown, Menu, Input, Button } from 'antd';
-import { useEffect, useState, useCallback } from 'react';
+import { message, Layout, Form, Tooltip, Dropdown, Space, Input, Button } from 'antd';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
 import { filter, map, pipe, fromPairs, addIndex, tap } from 'ramda';
 
 const mapIndexed = addIndex(map);
-/**
- * 生成列配置
- * @param {Array} fields 属性数组
- * @returns {Array} columns
- */
-const genColumns = map(({ fieldName }) => {
-  const defaultProps = {
-    title: fieldName,
-    dataIndex: fieldName,
-  };
-  const excludeProps = {};
-  if (fieldName === 'the_geom') {
-    excludeProps.hideInTable = true;
-  }
-  return {
-    ...defaultProps,
-    ...excludeProps,
-  };
-});
 
 /**
  * 生成可控的列配置
@@ -49,8 +30,82 @@ const genColumnsStateMap = pipe(
 export default ({ value, onChange, path }) => {
   const [columns, setColumns] = useState([]);
   const [columnsStateMap, setColumnsStateMap] = useState({});
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef(null);
 
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText('');
+  };
   useEffect(() => {
+    const getColumnSearchProps = (dataIndex) => ({
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            ref={searchInput}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{ marginBottom: 8, display: 'block' }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90 }}
+            >
+              查询
+            </Button>
+            <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+              重置
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: (filtered) => (
+        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+      ),
+      onFilter: (value, record) =>
+        record[dataIndex]
+          ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+          : '',
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput.current?.select(), 100);
+        }
+      },
+    });
+
+    /**
+     * 生成列配置
+     * @param {Array} fields 属性数组
+     * @returns {Array} columns
+     */
+    const genColumns = map(({ fieldName }) => {
+      const defaultProps = {
+        title: fieldName,
+        dataIndex: fieldName,
+        ...getColumnSearchProps(fieldName),
+      };
+      const excludeProps = {};
+      if (fieldName === 'the_geom') {
+        excludeProps.hideInTable = true;
+      }
+      return {
+        ...defaultProps,
+        ...excludeProps,
+      };
+    });
     if (path) {
       getFieldsInfo({ path }).then(({ fgdbfieldDetailInfos }) => {
         setColumns(genColumns(fgdbfieldDetailInfos));
@@ -64,6 +119,7 @@ export default ({ value, onChange, path }) => {
       columns={columns}
       params={{ path }}
       request={async (params, sorter, filter) => {
+        console.log(params, sorter, filter);
         if (params.path) {
           return getFeatures(params);
         }

@@ -49,7 +49,7 @@ export default () => {
               <DraggerUpload type="shp" />
             </Form.Item>
           </StepsForm.StepForm>
-          <StepsForm.StepForm
+          {/* <StepsForm.StepForm
             name="output"
             title="输出文件"
             onFinish={() => {
@@ -61,7 +61,7 @@ export default () => {
             <Form.Item name="outputFileUrl" rules={[{ required: true }]}>
               <SaveFile type="shp" />
             </Form.Item>
-          </StepsForm.StepForm>
+          </StepsForm.StepForm> */}
           <StepsForm.StepForm name="data" title="配置数据">
             <Form.Item name="filterFeatures">
               <ConfigFeaturesTable path={formStore.inputFileUrl} />
