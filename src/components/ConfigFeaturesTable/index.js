@@ -11,9 +11,10 @@ import { filter, map, pipe, fromPairs, addIndex, tap } from 'ramda';
  * value和onChange是表单必须的参数，由antd传参
  */
 export default ({ value, onChange, path }) => {
-  const [columns, setColumns] = useState([]);
+  const [columns, setColumns] = useState([]); // 列配置
   const searchInput = useRef(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [dataSource, setDataSource] = useState([]); // 缓存的全量数据
 
   const rowSelection = {
     onChange: setSelectedRowKeys,
@@ -23,12 +24,25 @@ export default ({ value, onChange, path }) => {
 
   const request = async (params, sorter, filter) => {
     if (params.path) {
-      return getFeatures(params);
+      if (dataSource.length) {
+        return {
+          data: dataSource,
+          success: true,
+        };
+      }
+      const data = await getFeatures(params);
+      const keys = data?.map(({ id }) => id) || [];
+      setSelectedRowKeys(keys);
+      setDataSource(data);
+      return {
+        data,
+        success: true,
+      };
     }
-    return Promise.resolve({
+    return {
       data: [],
       success: true,
-    });
+    };
   };
 
   useEffect(() => {
@@ -106,15 +120,6 @@ export default ({ value, onChange, path }) => {
     if (path) {
       getFieldsInfo({ path }).then(({ fgdbfieldDetailInfos }) => {
         setColumns(genColumns(fgdbfieldDetailInfos));
-      });
-    }
-  }, [path]);
-
-  useEffect(() => {
-    if (path) {
-      getFeatures({ path }).then(({ data }) => {
-        const keys = data.map(({ id }) => id);
-        setSelectedRowKeys(keys);
       });
     }
   }, [path]);

@@ -2,16 +2,12 @@ import { request } from 'umi';
 
 export async function getFeatures({ path }) {
   const url = `${API_URL}/shapefile/features`;
-  const data = await request(url, {
+  return request(url, {
     method: 'get',
     params: {
       originalShapePath: path,
     },
   });
-  return {
-    data,
-    success: true,
-  };
 }
 
 export async function getFieldsInfo({ path }) {
