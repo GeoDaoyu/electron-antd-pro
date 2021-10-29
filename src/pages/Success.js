@@ -1,17 +1,15 @@
 import { Button, Result } from 'antd';
 import { history } from 'umi';
 
-const NoFoundPage = () => (
+export default () => (
   <Result
     status="success"
-    title="Successfully Purchased Cloud Server ECS!"
-    subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+    title="提交成功，开始执行加密!"
+    subTitle="加密时间依赖于数据量, 请等待."
     extra={
       <Button type="primary" onClick={() => history.push('/')}>
-        Back Home
+        返回主页
       </Button>
     }
   />
 );
-
-export default NoFoundPage;
