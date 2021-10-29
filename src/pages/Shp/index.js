@@ -20,16 +20,24 @@ export default () => {
         <StepsForm
           formRef={formRef}
           onFinish={async (values) => {
-            const { inputFileUrl, outputFileUrl } = values;
+            const { inputFileUrl, outputFileUrl, configuration } = values;
+            const lastIndex = inputFileUrl.lastIndexOf('\\');
+            const fileName = inputFileUrl.substring(lastIndex + 1);
             const params = {
               encryptShapePath: outputFileUrl,
-              hideFeaturesIdMap: {},
-              hideFieldsNameMap: {},
+              hideFeaturesIdMap: {
+                [fileName]: configuration.hideFieldsNameArray,
+              },
+              hideFieldsNameMap: {
+                [fileName]: configuration.hideFeaturesIdArray,
+              },
               originalShapePaths: [inputFileUrl],
             };
-            encrypt(params).then(() => {
-              history.push('/success');
-            });
+            console.log(params);
+
+            // encrypt(params).then(() => {
+            //   history.push('/success');
+            // });
           }}
           formProps={{
             validateMessages: {

@@ -5,19 +5,42 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
 import { filter, map, pipe, fromPairs, addIndex, tap } from 'ramda';
 
+const difference = (setA, setB) => {
+  const _difference = new Set(setA);
+  for (const elem of setB) {
+    _difference.delete(elem);
+  }
+  return [..._difference];
+};
+
 /**
  * custom form item
  * 配置数据
  * value和onChange是表单必须的参数，由antd传参
  */
-export default ({ value, onChange, path }) => {
+export default ({
+  value = {
+    hideFeaturesIdArray: [],
+    hideFieldsNameArray: [],
+  },
+  onChange,
+  path,
+}) => {
   const [columns, setColumns] = useState([]); // 列配置
   const searchInput = useRef(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataSource, setDataSource] = useState([]); // 缓存的全量数据
 
   const rowSelection = {
-    onChange: setSelectedRowKeys,
+    onChange: (val) => {
+      setSelectedRowKeys(val);
+      const allKeys = dataSource.map(({ id }) => id);
+      const unSelectedRowKeys = difference(allKeys, val);
+      onChange({
+        ...value,
+        hideFeaturesIdArray: unSelectedRowKeys,
+      });
+    },
     selectedRowKeys,
     fixed: true,
   };
@@ -144,8 +167,12 @@ export default ({ value, onChange, path }) => {
         tooltip: '在这里配置数据的可见性',
       }}
       columnsState={{
-        onChange: (value) => {
-          console.log(value);
+        onChange: (val) => {
+          const hideFieldsNameArray = Object.keys(val);
+          onChange({
+            ...value,
+            hideFieldsNameArray,
+          });
         },
       }}
       scroll={{ x: 800 }}
