@@ -3,19 +3,12 @@ import { history } from 'umi';
 import { StepsForm } from '@ant-design/pro-form';
 import { Layout, Form } from 'antd';
 import styles from './index.less';
+import { encrypt } from './service';
 import DraggerUpload from '@/components/DraggerUpload';
 import SaveFile from '@/components/SaveFile';
 import ConfigFeaturesTable from '@/components/ConfigFeaturesTable';
 
 const { Content } = Layout;
-
-const waitTime = (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
 
 export default () => {
   const formRef = useRef();
@@ -26,9 +19,17 @@ export default () => {
       <Content className={styles.content}>
         <StepsForm
           formRef={formRef}
-          onFinish={async () => {
-            await waitTime(100);
-            history.push('/success');
+          onFinish={async (values) => {
+            const { inputFileUrl, outputFileUrl } = values;
+            const params = {
+              encryptShapePath: outputFileUrl,
+              hideFeaturesIdMap: {},
+              hideFieldsNameMap: {},
+              originalShapePaths: [inputFileUrl],
+            };
+            encrypt(params).then(() => {
+              history.push('/success');
+            });
           }}
           formProps={{
             validateMessages: {
@@ -49,7 +50,7 @@ export default () => {
               <DraggerUpload type="shp" />
             </Form.Item>
           </StepsForm.StepForm>
-          {/* <StepsForm.StepForm
+          <StepsForm.StepForm
             name="output"
             title="输出文件"
             onFinish={() => {
@@ -61,9 +62,9 @@ export default () => {
             <Form.Item name="outputFileUrl" rules={[{ required: true }]}>
               <SaveFile type="shp" />
             </Form.Item>
-          </StepsForm.StepForm> */}
+          </StepsForm.StepForm>
           <StepsForm.StepForm name="data" title="配置数据">
-            <Form.Item name="filterFeatures">
+            <Form.Item name="configuration">
               <ConfigFeaturesTable path={formStore.inputFileUrl} />
             </Form.Item>
           </StepsForm.StepForm>
