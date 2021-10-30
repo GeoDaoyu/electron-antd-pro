@@ -49,12 +49,12 @@ ipcMain.on('saveFile', (event, arg) => {
     ['gdb', 'GeoDatabase'],
   ]);
   dialog
-    .showSaveDialog({
-      filters: [{ name: map.get(arg), extensions: [arg] }],
+    .showOpenDialog({
+      properties: ['openDirectory'],
     })
-    .then(({ canceled, filePath }) => {
+    .then(({ canceled, filePaths }) => {
       if (!canceled) {
-        event.sender.send('saveFilePath', filePath);
+        event.sender.send('saveFilePath', filePaths);
       }
     });
 });
