@@ -6,15 +6,15 @@ import { useState } from 'react';
  * 获取本地文件夹绝对路径
  * value和onChange是表单必须的参数，由antd传参
  */
-export default ({ value, onChange, type }) => {
+export default ({ value, onChange }) => {
   const [fileText, setFileText] = useState(value);
   const onClick = () => {
     const { ipcRenderer } = window.electron;
-    ipcRenderer.send('saveFile', type);
-    ipcRenderer.once('saveFilePath', (event, filePath) => {
-      if (filePath) {
-        setFileText(filePath);
-        onChange(filePath);
+    ipcRenderer.send('saveFile');
+    ipcRenderer.once('saveFilePath', (event, folderPath) => {
+      if (folderPath) {
+        setFileText(folderPath);
+        onChange(folderPath);
       }
     });
   };

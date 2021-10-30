@@ -1,9 +1,9 @@
-import ProTable, { TableDropdown } from '@ant-design/pro-table';
-import { EllipsisOutlined, QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { message, Layout, Form, Tooltip, Table, Space, Input, Button } from 'antd';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import ProTable from '@ant-design/pro-table';
+import { SearchOutlined } from '@ant-design/icons';
+import { Space, Input, Button } from 'antd';
+import { useEffect, useState, useRef } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
-import { filter, map, pipe, fromPairs, addIndex, tap } from 'ramda';
+import { map } from 'ramda';
 
 const difference = (setA, setB) => {
   const _difference = new Set(setA);

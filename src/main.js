@@ -43,18 +43,14 @@ ipcMain.on('openFile', (event, arg) => {
       }
     });
 });
-ipcMain.on('saveFile', (event, arg) => {
-  const map = new Map([
-    ['shp', 'Shpfile'],
-    ['gdb', 'GeoDatabase'],
-  ]);
+ipcMain.on('saveFile', (event) => {
   dialog
     .showOpenDialog({
       properties: ['openDirectory'],
     })
     .then(({ canceled, filePaths }) => {
       if (!canceled) {
-        event.sender.send('saveFilePath', filePaths);
+        event.sender.send('saveFilePath', filePaths[0]);
       }
     });
 });
