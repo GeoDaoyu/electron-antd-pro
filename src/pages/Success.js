@@ -6,11 +6,6 @@ import styles from './Success.less';
 const { Content } = Layout;
 
 export default () => {
-  useEffect(() => {
-    setTimeout(() => {
-      history.push('/');
-    }, 10000);
-  });
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>

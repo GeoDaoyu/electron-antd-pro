@@ -16,11 +16,6 @@ const routes = [
     icon: <DatabaseOutlined className={styles['link-icon']} />,
     label: 'GDB数据加密',
   },
-  {
-    to: '/mul',
-    icon: <CopyOutlined className={styles['link-icon']} />,
-    label: '批量处理',
-  },
 ];
 export default () => {
   return (
@@ -30,7 +25,9 @@ export default () => {
           {routes.map((route) => (
             <Link key={route.to} to={route.to} className={styles.link}>
               {route.icon}
-              <Title level={2} className={styles['link-title']}>{route.label}</Title>
+              <Title level={2} className={styles['link-title']}>
+                {route.label}
+              </Title>
             </Link>
           ))}
         </Space>
