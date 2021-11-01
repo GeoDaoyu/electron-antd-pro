@@ -35,6 +35,7 @@ ipcMain.on('openFile', (event, arg) => {
   ]);
   dialog
     .showOpenDialog({
+      properties: ['multiSelections'],
       filters: [{ name: map.get(arg), extensions: [arg] }],
     })
     .then(({ canceled, filePaths }) => {
