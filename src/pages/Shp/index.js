@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { history } from 'umi';
 import { Layout, Table, Progress, Space, Button, Empty, Input, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import SaveFile from '@/components/SaveFile';
 import styles from './index.less';
 import { useModel } from 'umi';
+import { encrypt, queryLogs } from './service';
 const { Content } = Layout;
 
 const locale = {
@@ -13,8 +14,7 @@ const locale = {
 const { ipcRenderer } = window.electron;
 
 export default () => {
-  const { dataSource, addRows, deleteRow, updateRow, hasRow, commitSetting, clearDataSource } =
-    useModel('shp');
+  const { dataSource, addRows, deleteRow, clearDataSource } = useModel('shp');
   const showItemInFolder = (path) => {
     ipcRenderer.send('showItemInFolder', path);
   };
@@ -66,6 +66,7 @@ export default () => {
       ),
     },
   ];
+  const [loading, setLoading] = useState(false);
   const addItem = () => {
     ipcRenderer.send('openFile', 'shp');
     ipcRenderer.once('openFilePaths', (event, filePaths) => {
@@ -73,7 +74,37 @@ export default () => {
     });
   };
   const onFinish = (values) => {
-    console.log('Success:', values);
+    setLoading(true);
+    const { outputFolderUrl } = values;
+    const params = {
+      encryptShapePath: outputFolderUrl,
+      originalShapePaths: [],
+      hideFeaturesIdMap: null,
+      hideFieldsNameMap: null,
+    };
+    dataSource.forEach(({ path, setting }) => {
+      params.originalShapePaths.push(path);
+      if (setting) {
+        params.hideFeaturesIdMap = {
+          ...params.hideFeaturesIdMap,
+          [path]: setting.hideFieldsNameArray,
+        };
+        params.hideFieldsNameMap = {
+          ...params.hideFieldsNameMap,
+          [path]: setting.hideFeaturesIdArray,
+        };
+      }
+    });
+    encrypt(params).then(({ jobId }) => {
+      updateProgress(jobId);
+    });
+  };
+  const updateProgress = (jobId) => {
+    queryLogs(jobId).then(({ progressMap }) => {
+      console.log(progressMap);
+      clearDataSource();
+      history.push('/success');
+    });
   };
   return (
     <Layout className={styles.layout}>
@@ -105,7 +136,7 @@ export default () => {
               <SaveFile />
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" loading={loading} htmlType="submit">
                 开始转换
               </Button>
             </Form.Item>

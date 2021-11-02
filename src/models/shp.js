@@ -53,9 +53,8 @@ export default () => {
     setDataSource([]);
   };
 
-  const getPath = (key) => {
-    const row = dataSource.find((row) => row.key === key);
-    return row?.path;
+  const getRow = (key) => {
+    return dataSource.find((row) => row.key === key);
   };
 
   return {
@@ -66,6 +65,6 @@ export default () => {
     hasRow,
     commitSetting,
     clearDataSource,
-    getPath,
+    getRow,
   };
 };

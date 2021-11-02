@@ -6,7 +6,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Space, Input, Button } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
-import { useModel } from 'umi';
+import { useModel, history } from 'umi';
 import { map } from 'ramda';
 
 const { Content } = Layout;
@@ -20,8 +20,10 @@ const difference = (setA, setB) => {
 
 export default () => {
   const { id } = useParams();
-  const { getPath } = useModel('shp');
-  const path = getPath(id);
+  const { getRow, commitSetting } = useModel('shp');
+  const row = getRow(id);
+  const { path, setting: defaultSetting } = row;
+  const [setting, setSetting] = useState(defaultSetting);
   const [columns, setColumns] = useState([]); // 列配置
   const searchInput = useRef(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -32,13 +34,22 @@ export default () => {
       setSelectedRowKeys(val);
       const allKeys = dataSource.map(({ id }) => id);
       const unSelectedRowKeys = difference(allKeys, val);
-      onChange({
-        ...value,
+      setSetting({
+        ...setting,
         hideFeaturesIdArray: unSelectedRowKeys,
       });
     },
     selectedRowKeys,
     fixed: true,
+  };
+
+  const commit = () => {
+    commitSetting(id, setting);
+    history.goBack();
+  };
+
+  const cancel = () => {
+    history.goBack();
   };
 
   const request = async (params, sorter, filter) => {
@@ -139,7 +150,8 @@ export default () => {
 
     if (path) {
       getFieldsInfo({ path }).then(({ fgdbfieldDetailInfos }) => {
-        setColumns(genColumns(fgdbfieldDetailInfos));
+        const columns = genColumns(fgdbfieldDetailInfos);
+        setColumns(columns);
       });
     }
   }, [path]);
@@ -147,35 +159,39 @@ export default () => {
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
-        <ProTable
-          style={{ width: 800 }}
-          columns={columns}
-          params={{ path }}
-          request={request}
-          search={false}
-          rowKey="id"
-          pagination={{
-            showQuickJumper: true,
-            pageSize: 5,
-            pageSizeOptions: [5, 10, 20, 50, 100],
-          }}
-          rowSelection={rowSelection}
-          dateFormatter="string"
-          toolbar={{
-            title: '配置数据',
-            tooltip: '在这里配置数据的可见性',
-          }}
-          columnsState={{
-            onChange: (val) => {
-              const hideFieldsNameArray = Object.keys(val);
-              onChange({
-                ...value,
-                hideFieldsNameArray,
-              });
-            },
-          }}
-          scroll={{ x: 800 }}
-        />
+        <div>
+          <ProTable
+            style={{ width: 800 }}
+            columns={columns}
+            params={{ path }}
+            request={request}
+            search={false}
+            rowKey="id"
+            pagination={{
+              showQuickJumper: true,
+              pageSize: 5,
+              pageSizeOptions: [5, 10, 20, 50, 100],
+            }}
+            rowSelection={rowSelection}
+            dateFormatter="string"
+            toolbar={{
+              title: '配置数据',
+              tooltip: '在这里配置数据的可见性',
+            }}
+            columnsState={{
+              onChange: (val) => {
+                const hideFieldsNameArray = Object.keys(val);
+                setSetting({
+                  ...setting,
+                  hideFieldsNameArray,
+                });
+              },
+            }}
+            scroll={{ x: 800 }}
+          />
+          <Button onClick={commit}>确定</Button>
+          <Button onClick={cancel}>取消</Button>
+        </div>
       </Content>
     </Layout>
   );
