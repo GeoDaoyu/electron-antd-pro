@@ -1,9 +1,21 @@
 import { request } from 'umi';
 
-export async function encrypt(data) {
-  const url = `${API_URL}/shapefile/encrypt-data`;
+export async function getFeatures({ path }) {
+  const url = `${API_URL}/shapefile/features`;
   return request(url, {
-    method: 'post',
-    data,
+    method: 'get',
+    params: {
+      originalShapePath: path,
+    },
+  });
+}
+
+export async function getFieldsInfo({ path }) {
+  const url = `${API_URL}/shapefile/fields-info`;
+  return request(url, {
+    method: 'get',
+    params: {
+      originalShapePath: path,
+    },
   });
 }

@@ -1,76 +1,87 @@
 import { useRef, useState } from 'react';
 import { history } from 'umi';
-import { StepsForm } from '@ant-design/pro-form';
-import { Layout, Form } from 'antd';
+import { Layout, Table, Progress, Space, Button, Empty } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import { encrypt } from './service';
-import DraggerUpload from '@/components/DraggerUpload';
-import SaveFile from '@/components/SaveFile';
-import ConfigFeaturesTable from '@/components/ConfigFeaturesTable';
-
+import { useModel } from 'umi';
 const { Content } = Layout;
 
-export default () => {
-  const formRef = useRef();
-  const [formStore, setFormStore] = useState({}); // 保存每一个stepsForm的值
+const locale = {
+  emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="点击底部按钮，添加数据" />,
+};
 
-  const onFinish = async (values) => {
-    const { inputFileUrl, outputFolderUrl, configuration } = values;
-    const params = {
-      encryptShapePath: outputFolderUrl,
-      originalShapePaths: [inputFileUrl],
-      hideFeaturesIdMap: null,
-      hideFieldsNameMap: null,
-    };
-    if (configuration) {
-      params.hideFeaturesIdMap = {
-        [inputFileUrl]: configuration.hideFieldsNameArray,
-      };
-      params.hideFieldsNameMap = {
-        [inputFileUrl]: configuration.hideFeaturesIdArray,
-      };
-    }
-    encrypt(params).then(() => {
-      history.push('/success');
+export default () => {
+  const { dataSource, addRows, deleteRow, updateRow, hasRow, commitSetting, clearDataSource } =
+    useModel('shp');
+  const columns = [
+    {
+      title: '图层名称',
+      dataIndex: 'path',
+      key: 'path',
+      render: (text) => <a onClick={() => {}}>{text}</a>,
+    },
+    {
+      title: '加密进度',
+      dataIndex: 'progress',
+      key: 'progress',
+      render: (text, record) => {
+        return <Progress percent={text} size="small" />;
+      },
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+          <a
+            key="editable"
+            onClick={() => {
+              history.push(`./shp-setting/${record.key}`);
+            }}
+          >
+            配置
+          </a>
+          <a
+            key="delete"
+            onClick={() => {
+              deleteRow(record.key);
+            }}
+          >
+            删除
+          </a>
+        </Space>
+      ),
+    },
+  ];
+  const addItem = () => {
+    const { ipcRenderer } = window.electron;
+    ipcRenderer.send('openFile', 'shp');
+    ipcRenderer.once('openFilePaths', (event, filePaths) => {
+      addRows(filePaths);
     });
   };
-
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
-        <StepsForm
-          formRef={formRef}
-          onFinish={onFinish}
-          formProps={{
-            validateMessages: {
-              required: '此项为必填项',
-            },
-          }}
-        >
-          <StepsForm.StepForm
-            name="input"
-            title="选择文件"
-            onFinish={() => {
-              const currFormFieldsValue = formRef.current?.getFieldsValue() || {};
-              setFormStore({ ...formStore, ...currFormFieldsValue });
-              return true;
-            }}
+        <div>
+          <Table
+            className={styles.content_table}
+            columns={columns}
+            dataSource={dataSource}
+            locale={locale}
+          />
+          <Button
+            className={styles.content_button}
+            onClick={addItem}
+            type="dashed"
+            icon={<PlusOutlined />}
           >
-            <Form.Item name="inputFileUrl" rules={[{ required: true }]}>
-              <DraggerUpload type="shp" />
-            </Form.Item>
-          </StepsForm.StepForm>
-          <StepsForm.StepForm name="output" title="输出文件" onFinish={() => true}>
-            <Form.Item name="outputFolderUrl" rules={[{ required: true }]}>
-              <SaveFile />
-            </Form.Item>
-          </StepsForm.StepForm>
-          <StepsForm.StepForm name="data" title="加密配置" onFinish={() => true}>
-            <Form.Item name="configuration">
-              <ConfigFeaturesTable path={formStore.inputFileUrl} />
-            </Form.Item>
-          </StepsForm.StepForm>
-        </StepsForm>
+            添加一行数据
+          </Button>
+          输出文件夹：
+          <Button>打开</Button>
+          <Button style={{ float: 'right', marginTop: 20 }}>开始转换</Button>
+        </div>
       </Content>
     </Layout>
   );
