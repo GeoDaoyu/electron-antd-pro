@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { history } from 'umi';
-import { Layout, Table, Progress, Space, Button, Empty } from 'antd';
+import { Layout, Table, Progress, Space, Button, Empty, Input, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import SaveFile from '@/components/SaveFile';
 import styles from './index.less';
 import { useModel } from 'umi';
 const { Content } = Layout;
@@ -60,6 +61,9 @@ export default () => {
       addRows(filePaths);
     });
   };
+  const onFinish = (values) => {
+    console.log('Success:', values);
+  };
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
@@ -78,9 +82,23 @@ export default () => {
           >
             添加一行数据
           </Button>
-          输出文件夹：
-          <Button>打开</Button>
-          <Button style={{ float: 'right', marginTop: 20 }}>开始转换</Button>
+          <Form
+            name="basic"
+            onFinish={onFinish}
+            autoComplete="off"
+            validateMessages={{
+              required: '此项为必填项',
+            }}
+          >
+            <Form.Item name="outputFolderUrl" label="输出文件夹" rules={[{ required: true }]}>
+              <SaveFile />
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                开始转换
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
       </Content>
     </Layout>
