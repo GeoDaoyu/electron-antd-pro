@@ -10,16 +10,28 @@ const { Content } = Layout;
 const locale = {
   emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="点击底部按钮，添加数据" />,
 };
+const { ipcRenderer } = window.electron;
 
 export default () => {
   const { dataSource, addRows, deleteRow, updateRow, hasRow, commitSetting, clearDataSource } =
     useModel('shp');
+  const showItemInFolder = (path) => {
+    ipcRenderer.send('showItemInFolder', path);
+  };
   const columns = [
     {
       title: '图层名称',
       dataIndex: 'path',
       key: 'path',
-      render: (text) => <a onClick={() => {}}>{text}</a>,
+      render: (text) => (
+        <a
+          onClick={() => {
+            showItemInFolder(text);
+          }}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: '加密进度',
@@ -55,7 +67,6 @@ export default () => {
     },
   ];
   const addItem = () => {
-    const { ipcRenderer } = window.electron;
     ipcRenderer.send('openFile', 'shp');
     ipcRenderer.once('openFilePaths', (event, filePaths) => {
       addRows(filePaths);

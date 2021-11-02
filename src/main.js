@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const isDev = process.env.UMI_ENV === 'dev';
 
@@ -54,6 +54,9 @@ ipcMain.on('saveFile', (event) => {
         event.sender.send('saveFilePath', filePaths[0]);
       }
     });
+});
+ipcMain.on('showItemInFolder', (event, arg) => {
+  shell.showItemInFolder(arg);
 });
 
 app.whenReady().then(() => {
