@@ -52,9 +52,20 @@ export default () => {
   const clearDataSource = () => {
     setDataSource([]);
   };
-
   const getRow = (key) => {
     return dataSource.find((row) => row.key === key);
+  };
+  const updateProgress = (progressMap) => {
+    const paths = Object.keys(progressMap);
+    const progresses = Object.values(progressMap);
+    const updatedDataSource = dataSource.map((row) => {
+      const index = paths.findIndex((path) => row.path === path);
+      const progress = progresses[index];
+      console.log(progress);
+
+      return { ...row, progress };
+    });
+    setDataSource(updatedDataSource);
   };
 
   return {
@@ -66,5 +77,6 @@ export default () => {
     commitSetting,
     clearDataSource,
     getRow,
+    updateProgress,
   };
 };

@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { history } from 'umi';
-import { Layout, Table, Progress, Space, Button, Empty, Input, Form } from 'antd';
+import { Layout, Table, Progress, Space, Button, Empty, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import SaveFile from '@/components/SaveFile';
 import styles from './index.less';
 import { useModel } from 'umi';
+import { from, interval } from 'rxjs';
+import { exhaustMap, takeWhile } from 'rxjs/operators';
 import { encrypt, queryLogs } from './service';
+import { tap } from 'rxjs';
 const { Content } = Layout;
 
 const locale = {
@@ -14,7 +17,7 @@ const locale = {
 const { ipcRenderer } = window.electron;
 
 export default () => {
-  const { dataSource, addRows, deleteRow, clearDataSource } = useModel('shp');
+  const { dataSource, addRows, deleteRow, updateProgress: updateProgressByModel } = useModel('shp');
   const showItemInFolder = (path) => {
     ipcRenderer.send('showItemInFolder', path);
   };
@@ -100,11 +103,27 @@ export default () => {
     });
   };
   const updateProgress = (jobId) => {
-    queryLogs(jobId).then(({ progressMap }) => {
-      console.log(progressMap);
-      clearDataSource();
-      history.push('/success');
-    });
+    const handle = ({ progressMap }) => {
+      const progresses = Object.values(progressMap);
+      const finished = progresses.reduce((acc, curr) => acc && curr === 100, true);
+      updateProgressByModel(progressMap);
+      if (finished) {
+        setTimeout(() => {
+          history.push('/success');
+        }, 3000);
+      }
+    };
+    interval(1000)
+      .pipe(
+        exhaustMap(() => from(queryLogs(jobId))),
+        tap(handle),
+        takeWhile(({ progressMap }) => {
+          const progresses = Object.values(progressMap);
+          const finished = progresses.reduce((acc, curr) => acc && curr === 100, true);
+          return !finished;
+        }),
+      )
+      .subscribe();
   };
   return (
     <Layout className={styles.layout}>
