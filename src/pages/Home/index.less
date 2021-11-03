@@ -1,6 +1,8 @@
 .layout {
   width: 100%;
   height: 100%;
+  background-image: url('/background.svg');
+  background-repeat: no-repeat;
 }
 .content {
   display: flex;
@@ -8,12 +10,24 @@
   justify-content: center;
 }
 .link {
+  width: 320px;
+  height: 400px;
+  padding: 64px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 2px 2px 15px 0 rgba(23, 93, 238, 0.2);
+  cursor: pointer;
   .link-icon {
-    font-size: 120px;
     display: block;
-    color: grey;
+    width: 180px;
+    height: 180px;
   }
   .link-title {
-    color: grey;
+    margin-top: 48px;
+    font-weight: 400;
+    font-size: 32px;
   }
+}
+.link:hover {
+  transform: translateY(-12px);
 }

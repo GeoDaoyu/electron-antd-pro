@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440px" height="900px" viewBox="0 0 1440 900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 3</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#175DEE" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#175DEE" stop-opacity="0.1" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#175DEE" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#175DEE" stop-opacity="0.1" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#175DEE" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#175DEE" stop-opacity="0.14" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#175DEE" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#175DEE" stop-opacity="0.14" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-5">
+            <stop stop-color="#175DEE" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#175DEE" stop-opacity="0.32" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页切图" transform="translate(-30.000000, -68.000000)">
+            <g id="编组-3" transform="translate(-168.969083, 0.030917)">
+                <rect id="矩形" fill="url(#linearGradient-1)" opacity="0.600000024" transform="translate(582.969083, 592.969083) rotate(-45.000000) translate(-582.969083, -592.969083) " x="572.969083" y="339.969083" width="20" height="506" rx="10"></rect>
+                <rect id="矩形备份-9" fill="url(#linearGradient-1)" opacity="0.400000006" transform="translate(185.969083, 486.969083) rotate(-45.000000) translate(-185.969083, -486.969083) " x="175.969083" y="233.969083" width="20" height="506" rx="10"></rect>
+                <rect id="矩形备份-8" fill="url(#linearGradient-1)" opacity="0.5" transform="translate(658.969083, 185.969083) rotate(-45.000000) translate(-658.969083, -185.969083) " x="648.969083" y="-67.0309165" width="20" height="506" rx="10"></rect>
+                <rect id="矩形备份-4" fill="url(#linearGradient-2)" opacity="0.600000024" transform="translate(545.969083, 342.969083) rotate(-45.000000) translate(-545.969083, -342.969083) " x="535.969083" y="242.969083" width="20" height="200" rx="10"></rect>
+                <rect id="矩形备份-2" fill="url(#linearGradient-3)" opacity="0.800000012" transform="translate(678.969083, 903.969083) rotate(-45.000000) translate(-678.969083, -903.969083) " x="662.969083" y="743.969083" width="32" height="320" rx="16"></rect>
+                <rect id="矩形备份-5" fill="url(#linearGradient-4)" opacity="0.800000012" transform="translate(1260.969083, 909.969083) rotate(-45.000000) translate(-1260.969083, -909.969083) " x="1252.96908" y="749.969083" width="16" height="320" rx="8"></rect>
+                <rect id="矩形备份-6" fill="url(#linearGradient-3)" opacity="0.300000012" transform="translate(1390.969083, 301.969083) rotate(-45.000000) translate(-1390.969083, -301.969083) " x="1374.96908" y="141.969083" width="32" height="320" rx="16"></rect>
+                <rect id="矩形备份-7" fill="url(#linearGradient-5)" opacity="0.300000012" transform="translate(1440.969083, 723.969083) rotate(-45.000000) translate(-1440.969083, -723.969083) " x="1424.96908" y="563.969083" width="32" height="320" rx="16"></rect>
+                <rect id="矩形备份-3" fill="url(#linearGradient-3)" opacity="0.300000012" transform="translate(976.969083, 235.969083) rotate(-45.000000) translate(-976.969083, -235.969083) " x="960.969083" y="75.9690835" width="32" height="320" rx="16"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
