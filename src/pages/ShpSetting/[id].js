@@ -188,8 +188,7 @@ export default () => {
           rowSelection={rowSelection}
           dateFormatter="string"
           toolbar={{
-            title: '配置数据',
-            tooltip: '在这里配置数据的可见性',
+            title: '选择加密数据',
           }}
           columnsState={{
             onChange: (val) => {

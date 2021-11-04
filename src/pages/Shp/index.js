@@ -91,7 +91,7 @@ export default () => {
     const inputValidate = dataSource.length > 0;
     const outputValidate = outputFolderUrl !== '';
     if (outputValidate) {
-      message.error('请选择输出文件夹');
+      message.error('请选择输出目录');
     }
     if (inputValidate) {
       message.error('请添加数据');

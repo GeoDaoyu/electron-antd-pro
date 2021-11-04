@@ -14,5 +14,5 @@ export default ({ onChange }) => {
     });
   };
 
-  return <Button onClick={onClick}>输出文件</Button>;
+  return <Button onClick={onClick}>输出目录</Button>;
 };
