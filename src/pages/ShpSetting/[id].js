@@ -1,12 +1,10 @@
-import { useParams } from 'umi';
-import { Layout, Form } from 'antd';
 import styles from './index.less';
 import ProTable from '@ant-design/pro-table';
-import { SearchOutlined } from '@ant-design/icons';
-import { Space, Input, Button } from 'antd';
+import { SearchOutlined, DoubleLeftOutlined } from '@ant-design/icons';
+import { Layout, Space, Button, Row, Col, Input } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
-import { useModel, history } from 'umi';
+import { useModel, history, useParams, Link } from 'umi';
 import { map } from 'ramda';
 
 const { Content } = Layout;
@@ -41,6 +39,8 @@ export default () => {
     },
     selectedRowKeys,
     fixed: true,
+    selections: true,
+    alwaysShowAlert: true,
   };
 
   const commit = () => {
@@ -159,39 +159,52 @@ export default () => {
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
-        <div>
-          <ProTable
-            style={{ width: 800 }}
-            columns={columns}
-            params={{ path }}
-            request={request}
-            search={false}
-            rowKey="id"
-            pagination={{
-              showQuickJumper: true,
-              pageSize: 5,
-              pageSizeOptions: [5, 10, 20, 50, 100],
-            }}
-            rowSelection={rowSelection}
-            dateFormatter="string"
-            toolbar={{
-              title: '配置数据',
-              tooltip: '在这里配置数据的可见性',
-            }}
-            columnsState={{
-              onChange: (val) => {
-                const hideFieldsNameArray = Object.keys(val);
-                setSetting({
-                  ...setting,
-                  hideFieldsNameArray,
-                });
-              },
-            }}
-            scroll={{ x: 800 }}
-          />
-          <Button onClick={commit}>确定</Button>
-          <Button onClick={cancel}>取消</Button>
-        </div>
+        <Row className={styles.row}>
+          <Col span={24}>
+            <Link onClick={cancel} className={styles.link}>
+              <DoubleLeftOutlined /> 配置数据
+            </Link>
+            <Space className={styles.tool} size={16}>
+              <Button onClick={cancel}>取消</Button>
+              <Button onClick={commit} type="primary">
+                确定
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+        <ProTable
+          className={styles.table}
+          columns={columns}
+          params={{ path }}
+          request={request}
+          search={false}
+          rowKey="id"
+          options={{
+            fullScreen: false,
+            reload: false,
+            setting: true,
+            density: false,
+          }}
+          pagination={{
+            pageSize: 10,
+          }}
+          rowSelection={rowSelection}
+          dateFormatter="string"
+          toolbar={{
+            title: '配置数据',
+            tooltip: '在这里配置数据的可见性',
+          }}
+          columnsState={{
+            onChange: (val) => {
+              const hideFieldsNameArray = Object.keys(val);
+              setSetting({
+                ...setting,
+                hideFieldsNameArray,
+              });
+            },
+          }}
+          scroll={{ x: true }}
+        />
       </Content>
     </Layout>
   );
