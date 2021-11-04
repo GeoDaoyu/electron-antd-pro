@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 export default () => {
   const [dataSource, setDataSource] = useState([]);
+  const [outputFolderUrl, setOutputFolderUrl] = useState('');
 
   const addRows = (paths) => {
     const rows = paths.map((path) => ({
@@ -49,8 +50,9 @@ export default () => {
       updateRow(key, newRow);
     }
   };
-  const clearDataSource = () => {
+  const clear = () => {
     setDataSource([]);
+    setOutputFolderUrl('');
   };
   const getRow = (key) => {
     return dataSource.find((row) => row.key === key);
@@ -70,12 +72,14 @@ export default () => {
 
   return {
     dataSource,
+    outputFolderUrl,
+    setOutputFolderUrl,
     addRows,
     deleteRow,
     updateRow,
     hasRow,
     commitSetting,
-    clearDataSource,
+    clear,
     getRow,
     updateProgress,
   };

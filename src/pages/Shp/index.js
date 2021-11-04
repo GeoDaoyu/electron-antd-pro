@@ -1,23 +1,34 @@
 import { useState } from 'react';
-import { history } from 'umi';
-import { Layout, Table, Progress, Space, Button, Empty, Form } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Layout, Table, Progress, Space, Button, Empty, message, Row, Col } from 'antd';
 import SaveFile from '@/components/SaveFile';
 import styles from './index.less';
-import { useModel } from 'umi';
-import { from, interval } from 'rxjs';
+import { useModel, Link, history } from 'umi';
+import { from, interval, tap } from 'rxjs';
 import { exhaustMap, takeWhile } from 'rxjs/operators';
 import { encrypt, queryLogs } from './service';
-import { tap } from 'rxjs';
+import { DoubleLeftOutlined } from '@ant-design/icons';
 const { Content } = Layout;
 
 const locale = {
-  emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="点击底部按钮，添加数据" />,
+  emptyText: (
+    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="点击添加数据按钮，添加数据" />
+  ),
+};
+const pagination = {
+  showTotal: (total) => `共 ${total} 条数据`,
 };
 const { ipcRenderer } = window.electron;
 
 export default () => {
-  const { dataSource, addRows, deleteRow, updateProgress: updateProgressByModel } = useModel('shp');
+  const {
+    dataSource,
+    outputFolderUrl,
+    setOutputFolderUrl,
+    addRows,
+    deleteRow,
+    updateProgress: updateProgressByModel,
+    clear,
+  } = useModel('shp');
   const showItemInFolder = (path) => {
     ipcRenderer.send('showItemInFolder', path);
   };
@@ -76,9 +87,22 @@ export default () => {
       addRows(filePaths);
     });
   };
-  const onFinish = (values) => {
+  const formValidate = () => {
+    const inputValidate = dataSource.length > 0;
+    const outputValidate = outputFolderUrl !== '';
+    if (outputValidate) {
+      message.error('请选择输出文件夹');
+    }
+    if (inputValidate) {
+      message.error('请添加数据');
+    }
+    return inputValidate && outputValidate;
+  };
+  const onFinish = () => {
+    if (!formValidate || loading) {
+      return;
+    }
     setLoading(true);
-    const { outputFolderUrl } = values;
     const params = {
       encryptShapePath: outputFolderUrl,
       originalShapePaths: [],
@@ -128,39 +152,27 @@ export default () => {
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
-        <div>
-          <Table
-            className={styles.content_table}
-            columns={columns}
-            dataSource={dataSource}
-            locale={locale}
-          />
-          <Button
-            className={styles.content_button}
-            onClick={addItem}
-            type="dashed"
-            icon={<PlusOutlined />}
-          >
-            添加一行数据
-          </Button>
-          <Form
-            name="basic"
-            onFinish={onFinish}
-            autoComplete="off"
-            validateMessages={{
-              required: '此项为必填项',
-            }}
-          >
-            <Form.Item name="outputFolderUrl" label="输出文件夹" rules={[{ required: true }]}>
-              <SaveFile />
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" loading={loading} htmlType="submit">
+        <Row className={styles.row}>
+          <Col span={24}>
+            <Link to="./home" onClick={() => clear()} className={styles.link}>
+              <DoubleLeftOutlined /> Shp数据加密
+            </Link>
+            <Space className={styles.tool} size={16}>
+              <SaveFile onChange={setOutputFolderUrl} />
+              <Button onClick={addItem}>添加数据</Button>
+              <Button onClick={onFinish} type="primary" loading={loading}>
                 开始转换
               </Button>
-            </Form.Item>
-          </Form>
-        </div>
+            </Space>
+          </Col>
+        </Row>
+        <Table
+          className={styles.table}
+          columns={columns}
+          dataSource={dataSource}
+          locale={locale}
+          pagination={pagination}
+        />
       </Content>
     </Layout>
   );
