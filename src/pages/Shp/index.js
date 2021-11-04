@@ -103,6 +103,7 @@ export default () => {
       return;
     }
     setLoading(true);
+    window.time = new Date().getTime();
     const params = {
       encryptShapePath: outputFolderUrl,
       originalShapePaths: [],

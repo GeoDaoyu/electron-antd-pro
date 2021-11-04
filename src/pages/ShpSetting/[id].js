@@ -1,6 +1,6 @@
 import styles from './index.less';
 import ProTable from '@ant-design/pro-table';
-import { SearchOutlined, DoubleLeftOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { Layout, Space, Button, Row, Col, Input } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
@@ -161,9 +161,6 @@ export default () => {
       <Content className={styles.content}>
         <Row className={styles.row}>
           <Col span={24}>
-            <Link onClick={cancel} className={styles.link}>
-              <DoubleLeftOutlined /> 配置数据
-            </Link>
             <Space className={styles.tool} size={16}>
               <Button onClick={cancel}>取消</Button>
               <Button onClick={commit} type="primary">

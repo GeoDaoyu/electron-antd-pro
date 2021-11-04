@@ -1,24 +1,35 @@
-import { useEffect } from 'react';
-import { Layout, Button, Result } from 'antd';
-import { history } from 'umi';
+import { Layout, Typography, Card } from 'antd';
+import { useModel, Link, history } from 'umi';
 import styles from './Success.less';
 
 const { Content } = Layout;
+const { Paragraph } = Typography;
+const { ipcRenderer } = window.electron;
 
 export default () => {
+  const { dataSource, outputFolderUrl, clear } = useModel('shp');
+  const openOutputFolder = () => {
+    ipcRenderer.send('showItemInFolder', outputFolderUrl);
+  };
+  const goHome = () => {
+    clear();
+    history.push('/');
+  };
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
-        <Result
-          status="success"
-          title="提交成功，开始执行加密!"
-          subTitle="加密时间依赖于数据量, 请等待."
-          extra={
-            <Button type="primary" onClick={() => history.push('/')}>
-              返回主页
-            </Button>
-          }
-        />
+        <Card className={styles.card}>
+          <Paragraph className={styles.card_paragraph}>
+            本次对 {dataSource.length} 个文件进行了加密，耗时 {new Date().getTime() - window.time}{' '}
+            ms，成功
+            {dataSource.filter((row) => row.progress === 100).length} 个
+            <br />
+            加密结果存储在<a onClick={openOutputFolder}>这里</a>
+          </Paragraph>
+          <Link to="/home" onClick={goHome} className={styles.card_link}>
+            返回首页
+          </Link>
+        </Card>
       </Content>
     </Layout>
   );
