@@ -9,7 +9,7 @@ const Settings = {
   colorWeak: false,
   title: '非线性加密程序',
   pwa: false,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+  logo: '/logo.svg',
   iconfontUrl: '',
 };
 export default Settings;

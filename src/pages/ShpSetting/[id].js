@@ -4,8 +4,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Layout, Space, Button, Row, Col, Input } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import { getFeatures, getFieldsInfo } from './service';
-import { useModel, history, useParams, Link } from 'umi';
-import { map } from 'ramda';
+import { useModel, history, useParams } from 'umi';
+import { map, isEmpty } from 'ramda';
 
 const { Content } = Layout;
 const difference = (setA, setB) => {
@@ -62,7 +62,13 @@ export default () => {
       }
       const data = await getFeatures(params);
       const keys = data?.map(({ id }) => id) || [];
-      setSelectedRowKeys(keys);
+      // 支持多次编辑，从store中读取setting信息，做merge
+      if (setting?.hideFeaturesIdArray?.length) {
+        const mergeKeys = keys.filter((key) => !setting.hideFeaturesIdArray.includes(key));
+        setSelectedRowKeys(mergeKeys);
+      } else {
+        setSelectedRowKeys(keys);
+      }
       setDataSource(data);
       return {
         data,
@@ -76,6 +82,7 @@ export default () => {
   };
 
   useEffect(() => {
+    // 支持每个字段都可以查询
     const getColumnSearchProps = (dataIndex) => ({
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <div style={{ padding: 8 }}>
