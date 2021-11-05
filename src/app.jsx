@@ -1,7 +1,5 @@
 import { PageLoading } from '@ant-design/pro-layout';
 import { history } from 'umi';
-import RightContent from '@/components/RightContent';
-import Footer from '@/components/Footer';
 const loginPath = '/user/login';
 /** 获取用户信息比较慢的时候会展示一个 loading */
 
@@ -20,7 +18,7 @@ export function getInitialState() {
       userid: '00000001',
       email: 'antdesign@alipay.com',
       access: 'admin',
-    }
+    },
   }); // 如果是登录页面，不执行
 
   if (history.location.pathname !== loginPath) {
@@ -40,10 +38,10 @@ export function getInitialState() {
 
 export const layout = ({ initialState }) => {
   return {
-    rightContentRender: () => <RightContent />,
+    rightContentRender: () => <></>,
     disableContentMargin: false,
     waterMarkProps: {},
-    footerRender: () => <Footer />,
+    footerRender: () => <></>,
     onPageChange: () => {
       const { location } = history; // 如果没有登录，重定向到 login
 
