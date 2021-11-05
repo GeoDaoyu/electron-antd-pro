@@ -1,5 +1,6 @@
 import { Layout, Typography, Card } from 'antd';
 import { useModel, Link, history } from 'umi';
+import * as moment from 'moment';
 import styles from './Success.less';
 
 const { Content } = Layout;
@@ -15,13 +16,16 @@ export default () => {
     clear();
     history.push('/');
   };
+  const getTime = () => {
+    const timeEnd = new Date().getTime() - window.time;
+    return moment.duration(timeEnd).locale('zh-cn').humanize();
+  };
   return (
     <Layout className={styles.layout}>
       <Content className={styles.content}>
         <Card className={styles.card}>
           <Paragraph className={styles.card_paragraph}>
-            本次对 {dataSource.length} 个文件进行了加密，耗时 {new Date().getTime() - window.time}{' '}
-            ms，成功
+            本次对 {dataSource.length} 个文件进行了加密，耗时 {getTime()}，成功
             {dataSource.filter((row) => row.progress === 100).length} 个
             <br />
             加密结果存储在<a onClick={openOutputFolder}>这里</a>

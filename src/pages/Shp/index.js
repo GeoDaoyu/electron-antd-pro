@@ -7,6 +7,7 @@ import { from, interval, tap } from 'rxjs';
 import { exhaustMap, takeWhile } from 'rxjs/operators';
 import { encrypt, queryLogs } from './service';
 import { DoubleLeftOutlined } from '@ant-design/icons';
+import { isEmpty } from 'ramda';
 const { Content } = Layout;
 
 const locale = {
@@ -62,6 +63,7 @@ export default () => {
         <Space size="middle">
           <a
             key="editable"
+            style={{ color: isEmpty(record.setting) ? undefined : '#52c41a' }}
             onClick={() => {
               history.push(`./shp-setting/${record.key}`);
             }}
@@ -90,16 +92,17 @@ export default () => {
   const formValidate = () => {
     const inputValidate = dataSource.length > 0;
     const outputValidate = outputFolderUrl !== '';
-    if (outputValidate) {
+    if (!outputValidate) {
       message.error('请选择输出目录');
     }
-    if (inputValidate) {
+    if (!inputValidate) {
       message.error('请添加数据');
     }
     return inputValidate && outputValidate;
   };
   const onFinish = () => {
-    if (!formValidate || loading) {
+    const validate = formValidate();
+    if (!validate || loading) {
       return;
     }
     setLoading(true);
