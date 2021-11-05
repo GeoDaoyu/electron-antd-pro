@@ -26,6 +26,7 @@ export default () => {
   const searchInput = useRef(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataSource, setDataSource] = useState([]); // 缓存的全量数据
+  const [columnsStateMap, setColumnsStateMap] = useState({}); // 受控的表格设置栏
 
   const rowSelection = {
     onChange: (val) => {
@@ -68,6 +69,15 @@ export default () => {
         setSelectedRowKeys(mergeKeys);
       } else {
         setSelectedRowKeys(keys);
+      }
+      if (setting?.hideFieldsNameArray?.length) {
+        const map = {};
+        setting.hideFieldsNameArray.forEach((name) => {
+          map[name] = {
+            show: false,
+          };
+        });
+        setColumnsStateMap(map);
       }
       setDataSource(data);
       return {
@@ -198,12 +208,14 @@ export default () => {
             title: '选择加密数据',
           }}
           columnsState={{
+            value: columnsStateMap,
             onChange: (val) => {
               const hideFieldsNameArray = Object.keys(val);
               setSetting({
                 ...setting,
                 hideFieldsNameArray,
               });
+              setColumnsStateMap(val);
             },
           }}
           scroll={{ x: true }}
