@@ -18,9 +18,9 @@ const difference = (setA, setB) => {
 
 export default () => {
   const { id } = useParams();
-  const { getRow, commitSetting } = useModel('shp');
+  const { getRow, commitSetting } = useModel('gdb');
   const row = getRow(id);
-  const { path, setting: defaultSetting } = row;
+  const { name, path, setting: defaultSetting } = row;
   const [setting, setSetting] = useState(defaultSetting);
   const [columns, setColumns] = useState([]); // 列配置
   const searchInput = useRef(null);
@@ -166,12 +166,12 @@ export default () => {
     });
 
     if (path) {
-      getFieldsInfo({ path }).then(({ fgdbfieldDetailInfos }) => {
-        const columns = genColumns(fgdbfieldDetailInfos);
+      getFieldsInfo({ name, path }).then((infos) => {
+        const columns = genColumns(infos);
         setColumns(columns);
       });
     }
-  }, [path]);
+  }, [name, path]);
 
   return (
     <Layout className={styles.layout}>
@@ -189,7 +189,7 @@ export default () => {
         <ProTable
           className={styles.table}
           columns={columns}
-          params={{ path }}
+          params={{ path, name }}
           request={request}
           search={false}
           rowKey="id"

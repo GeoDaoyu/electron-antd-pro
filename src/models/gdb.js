@@ -4,23 +4,25 @@ import { v4 } from 'uuid';
 export default () => {
   const [dataSource, setDataSource] = useState([]);
   const [outputFolderUrl, setOutputFolderUrl] = useState('');
+  const [inputFolderUrl, setInputFolderUrl] = useState('');
 
-  const addRows = (paths) => {
-    const rows = paths.map((path) => ({
+  const addRows = (names, path) => {
+    const rows = names.map((name) => ({
       key: v4(),
+      name,
       path,
       progress: 0,
       setting: {},
     }));
     setDataSource([...dataSource, ...rows]);
   };
-  const deleteRow = (key) => {
-    const row = dataSource.find((row) => row.key === key);
-    if (row) {
-      const { key } = row;
-      const filtered = dataSource.filter((row) => row.key !== key);
-      setDataSource(filtered);
-    }
+  /**
+   * 删除同gdb下的所有图层
+   * @param {string} path
+   */
+  const deleteRow = (path) => {
+    const filtered = dataSource.filter((row) => row.path !== path);
+    setDataSource(filtered);
   };
   const updateRow = (key, newRow) => {
     const row = dataSource.find((row) => row.key === key);
@@ -72,6 +74,8 @@ export default () => {
     dataSource,
     outputFolderUrl,
     setOutputFolderUrl,
+    inputFolderUrl,
+    setInputFolderUrl,
     addRows,
     deleteRow,
     updateRow,

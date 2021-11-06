@@ -3,6 +3,7 @@ export default [
   { path: '/shp', layout: false, component: './Shp' },
   { path: '/shp-setting/:id', layout: false, component: './ShpSetting/[id]' },
   { path: '/gdb', layout: false, component: './GDB' },
+  { path: '/gdb-setting/:id', layout: false, component: './GDBSetting/[id]' },
   { path: '/success', layout: false, component: './Success' },
   { path: '/', redirect: '/home' },
   { component: './404' },
