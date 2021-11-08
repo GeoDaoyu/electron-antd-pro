@@ -28,21 +28,29 @@ const createWindow = () => {
   Menu.setApplicationMenu(null);
 };
 
-ipcMain.on('openFile', (event, arg) => {
-  const map = new Map([
-    ['shp', 'Shpfile'],
-    ['gdb', 'GeoDatabase'],
-  ]);
-  dialog
-    .showOpenDialog({
-      properties: ['multiSelections'],
-      filters: [{ name: map.get(arg), extensions: [arg] }],
-    })
-    .then(({ canceled, filePaths }) => {
-      if (!canceled) {
-        event.sender.send('openFilePaths', filePaths);
-      }
-    });
+ipcMain.on('openFile', (event, type) => {
+  if (type === 'shp') {
+    dialog
+      .showOpenDialog({
+        properties: ['multiSelections'],
+        filters: [{ name: map.get(type), extensions: [type] }],
+      })
+      .then(({ canceled, filePaths }) => {
+        if (!canceled) {
+          event.sender.send('openFilePaths', filePaths);
+        }
+      });
+  } else {
+    dialog
+      .showOpenDialog({
+        properties: ['openDirectory'],
+      })
+      .then(({ canceled, filePaths }) => {
+        if (!canceled) {
+          event.sender.send('openFilePaths', filePaths[0]);
+        }
+      });
+  }
 });
 ipcMain.on('saveFile', (event) => {
   dialog

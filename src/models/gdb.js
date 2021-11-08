@@ -60,10 +60,14 @@ export default () => {
     return dataSource.find((row) => row.key === key);
   };
   const updateProgress = (progressMap) => {
-    const paths = Object.keys(progressMap);
+    const names = Object.keys(progressMap).map((fullpath) => {
+      const lastIndex = fullpath.lastIndexOf('@');
+      const name = fullpath.slice(lastIndex + 1);
+      return name;
+    });
     const progresses = Object.values(progressMap);
     const updatedDataSource = dataSource.map((row) => {
-      const index = paths.findIndex((path) => row.path === path);
+      const index = names.findIndex((name) => row.name === name);
       const progress = progresses[index];
       return { ...row, progress };
     });

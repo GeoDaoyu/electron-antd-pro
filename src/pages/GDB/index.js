@@ -7,7 +7,7 @@ import { from, interval, tap } from 'rxjs';
 import { exhaustMap, takeWhile } from 'rxjs/operators';
 import { encrypt, queryLogs, getLayerName } from './service';
 import { DoubleLeftOutlined } from '@ant-design/icons';
-import { isEmpty } from 'ramda';
+import { isEmpty, groupBy, pipe, toPairs, map } from 'ramda';
 const { Content } = Layout;
 
 const locale = {
@@ -91,12 +91,14 @@ export default () => {
   ];
   const [loading, setLoading] = useState(false);
   const addItem = () => {
-    ipcRenderer.send('saveFile');
-    ipcRenderer.once('saveFilePath', (event, filePath) => {
-      setInputFolderUrl(filePath);
-      getLayerName(filePath).then((names) => {
-        addRows(names, filePath);
-      });
+    ipcRenderer.send('openFile', type);
+    ipcRenderer.once('openFilePaths', (event, filePath) => {
+      if (filePath) {
+        setInputFolderUrl(filePath);
+        getLayerName(filePath).then((names) => {
+          addRows(names, filePath);
+        });
+      }
     });
   };
   const formValidate = () => {
@@ -110,6 +112,34 @@ export default () => {
     }
     return inputValidate && outputValidate;
   };
+  const generateParam = pipe(
+    groupBy(({ path }) => path), // 按gdb分组
+    toPairs, // 对象转数组
+    map(([path, rows]) => {
+      const lastIndex = path.lastIndexOf('\\');
+      const fileName = path.slice(lastIndex + 1);
+      return rows.reduce(
+        (acc, curr) => {
+          const { name, setting } = curr;
+          acc.hideFeaturesIdMap = {
+            ...acc.hideFeaturesIdMap,
+            [name]: setting.hideFeaturesIdArray,
+          };
+          acc.hideFieldsNameMap = {
+            ...acc.hideFieldsNameMap,
+            [name]: setting.hideFieldsNameArray,
+          };
+          return acc;
+        },
+        {
+          encryptFgdbPath: `${outputFolderUrl}\\${fileName}`,
+          originalFgdbPath: path,
+          hideFeaturesIdMap: {},
+          hideFieldsNameMap: {},
+        },
+      );
+    }),
+  );
   const onFinish = () => {
     const validate = formValidate();
     if (!validate || loading) {
@@ -117,23 +147,7 @@ export default () => {
     }
     setLoading(true);
     window.time = new Date().getTime();
-    const params = dataSource.map(({ path, setting, name }) => {
-      const lastIndex = path.lastIndexOf('\\');
-      const fileName = path.slice(lastIndex + 1);
-
-      const hideFeaturesIdMap = {
-        [name]: setting.hideFieldsNameArray,
-      };
-      const hideFieldsNameMap = {
-        [name]: setting.hideFeaturesIdArray,
-      };
-      return {
-        encryptFgdbPath: `${outputFolderUrl}\\${fileName}`,
-        originalFgdbPath: path,
-        hideFeaturesIdMap,
-        hideFieldsNameMap,
-      };
-    });
+    const params = generateParam(dataSource);
 
     encrypt(params).then(({ jobId }) => {
       updateProgress(jobId);
