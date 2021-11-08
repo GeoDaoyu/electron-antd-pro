@@ -19,6 +19,7 @@ const pagination = {
   showTotal: (total) => `共 ${total} 条数据`,
 };
 const { ipcRenderer } = window.electron;
+const type = 'shp';
 
 export default () => {
   const {
@@ -29,7 +30,7 @@ export default () => {
     deleteRow,
     updateProgress: updateProgressByModel,
     clear,
-  } = useModel('shp');
+  } = useModel(type);
   const showItemInFolder = (path) => {
     ipcRenderer.send('showItemInFolder', path);
   };
@@ -65,7 +66,7 @@ export default () => {
             key="editable"
             style={{ color: isEmpty(record.setting) ? undefined : '#52c41a' }}
             onClick={() => {
-              history.push(`./shp-setting/${record.key}`);
+              history.push(`./${type}-setting/${record.key}`);
             }}
           >
             配置
@@ -84,7 +85,7 @@ export default () => {
   ];
   const [loading, setLoading] = useState(false);
   const addItem = () => {
-    ipcRenderer.send('openFile', 'shp');
+    ipcRenderer.send('openFile', type);
     ipcRenderer.once('openFilePaths', (event, filePaths) => {
       addRows(filePaths);
     });
@@ -137,7 +138,7 @@ export default () => {
       updateProgressByModel(progressMap);
       if (finished) {
         setTimeout(() => {
-          history.push('/success');
+          history.push(`/success?type=${type}`);
         }, 3000);
       }
     };

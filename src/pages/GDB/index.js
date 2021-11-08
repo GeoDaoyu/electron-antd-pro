@@ -19,6 +19,7 @@ const pagination = {
   showTotal: (total) => `共 ${total} 条数据`,
 };
 const { ipcRenderer } = window.electron;
+const type = 'gdb';
 
 export default () => {
   const {
@@ -30,7 +31,7 @@ export default () => {
     deleteRow,
     updateProgress: updateProgressByModel,
     clear,
-  } = useModel('gdb');
+  } = useModel(type);
   const showItemInFolder = (path) => {
     ipcRenderer.send('showItemInFolder', path);
   };
@@ -71,7 +72,7 @@ export default () => {
             key="editable"
             style={{ color: isEmpty(record.setting) ? undefined : '#52c41a' }}
             onClick={() => {
-              history.push(`./gdb-setting/${record.key}`);
+              history.push(`./${type}-setting/${record.key}`);
             }}
           >
             配置
@@ -116,26 +117,24 @@ export default () => {
     }
     setLoading(true);
     window.time = new Date().getTime();
-    const params = {
-      encryptFgdbPath: outputFolderUrl,
-      originalFgdbPath: [],
-      hideFeaturesIdMap: null,
-      hideFieldsNameMap: null,
-    };
-    console.log(params);
+    const params = dataSource.map(({ path, setting, name }) => {
+      const lastIndex = path.lastIndexOf('\\');
+      const fileName = path.slice(lastIndex + 1);
 
-    dataSource.forEach(({ path, setting }) => {
-      if (setting) {
-        params.hideFeaturesIdMap = {
-          ...params.hideFeaturesIdMap,
-          [path]: setting.hideFieldsNameArray,
-        };
-        params.hideFieldsNameMap = {
-          ...params.hideFieldsNameMap,
-          [path]: setting.hideFeaturesIdArray,
-        };
-      }
+      const hideFeaturesIdMap = {
+        [name]: setting.hideFieldsNameArray,
+      };
+      const hideFieldsNameMap = {
+        [name]: setting.hideFeaturesIdArray,
+      };
+      return {
+        encryptFgdbPath: `${outputFolderUrl}\\${fileName}`,
+        originalFgdbPath: path,
+        hideFeaturesIdMap,
+        hideFieldsNameMap,
+      };
     });
+
     encrypt(params).then(({ jobId }) => {
       updateProgress(jobId);
     });
@@ -147,7 +146,7 @@ export default () => {
       updateProgressByModel(progressMap);
       if (finished) {
         setTimeout(() => {
-          history.push('/success');
+          history.push(`/success?type=${type}`);
         }, 3000);
       }
     };

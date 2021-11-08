@@ -1,14 +1,16 @@
 import { Layout, Typography, Card } from 'antd';
-import { useModel, Link, history } from 'umi';
+import { useModel, Link, history, useLocation } from 'umi';
 import * as moment from 'moment';
-import styles from './Success.less';
+import styles from './index.less';
 
 const { Content } = Layout;
 const { Paragraph } = Typography;
 const { ipcRenderer } = window.electron;
 
 export default () => {
-  const { dataSource, outputFolderUrl, clear } = useModel('shp');
+  const location = useLocation();
+  const { type } = location.query;
+  const { dataSource, outputFolderUrl, clear } = useModel(type);
   const openOutputFolder = () => {
     ipcRenderer.send('showItemInFolder', outputFolderUrl);
   };
@@ -25,7 +27,7 @@ export default () => {
       <Content className={styles.content}>
         <Card className={styles.card}>
           <Paragraph className={styles.card_paragraph}>
-            本次对 {dataSource.length} 个文件进行了加密，耗时 {getTime()}，成功
+            本次对 {dataSource.length} 个图层进行了加密，耗时 {getTime()}，成功
             {dataSource.filter((row) => row.progress === 100).length} 个
             <br />
             加密结果存储在<a onClick={openOutputFolder}>这里</a>
