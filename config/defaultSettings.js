@@ -9,7 +9,7 @@ const Settings = {
   colorWeak: false,
   title: '非线性加密程序',
   pwa: false,
-  logo: '/logo.svg',
+  logo: '',
   iconfontUrl: '',
 };
 export default Settings;

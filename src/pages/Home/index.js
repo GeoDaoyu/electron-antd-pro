@@ -1,18 +1,20 @@
 import { history } from 'umi';
 import { Layout, Space, Typography } from 'antd';
 import styles from './index.less';
+import shpImg from './Shp.svg';
+import gdbImg from './GDB.svg';
 
 const { Content } = Layout;
 const { Title } = Typography;
 const routes = [
   {
     to: '/shp',
-    icon: '/Shp.svg',
+    icon: shpImg,
     label: 'Shp数据加密',
   },
   {
     to: '/gdb',
-    icon: '/GDB.svg',
+    icon: gdbImg,
     label: 'GDB数据加密',
   },
 ];

@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
+const { exec } = require('child_process');
 const path = require('path');
 const isDev = process.env.UMI_ENV === 'dev';
 
@@ -28,12 +29,19 @@ const createWindow = () => {
   Menu.setApplicationMenu(null);
 };
 
+const startServer = () => {
+  const cwd = isDev ? path.resolve(__dirname, '../public') : path.resolve(app.getPath(), './');
+  exec('run.bat', { cwd }, (error, stdout, stderr) => {
+    console.log(error, stdout, stderr);
+  });
+};
+
 ipcMain.on('openFile', (event, type) => {
   if (type === 'shp') {
     dialog
       .showOpenDialog({
         properties: ['multiSelections'],
-        filters: [{ name: map.get(type), extensions: [type] }],
+        filters: [{ name: 'Shpfile', extensions: [type] }],
       })
       .then(({ canceled, filePaths }) => {
         if (!canceled) {
@@ -68,6 +76,7 @@ ipcMain.on('showItemInFolder', (event, arg) => {
 });
 
 app.whenReady().then(() => {
+  startServer();
   createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -77,5 +86,7 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  };
 });
