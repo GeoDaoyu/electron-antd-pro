@@ -1,16 +1,10 @@
-# Ant Design Pro
+# 安徽非线性加密程序
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+基于 Ant Design Pro 和 Electron 搭建。前端负责页面和交互、加密逻辑使用 jar 包。
 
 ## Environment Prepare
 
 Install `node_modules`:
-
-```bash
-npm install
-```
-
-or
 
 ```bash
 yarn
@@ -25,33 +19,21 @@ Scripts provided in `package.json`. It's safe to modify or add additional script
 ### Start project
 
 ```bash
-npm start
+yarn start
+```
+
+```bash
+yarn electron
 ```
 
 ### Build project
 
 ```bash
-npm run build
+yarn build
 ```
-
-### Check code style
 
 ```bash
-npm run lint
+yarn package
 ```
 
-You can also use script to auto fix some lint error:
-
-```bash
-npm run lint:fix
-```
-
-### Test code
-
-```bash
-npm test
-```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+打包完在`/out`文件夹下。

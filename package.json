@@ -1,10 +1,10 @@
 {
-  "name": "ant-design-pro",
-  "version": "5.0.0",
-  "author": "zhanggy",
+  "name": "anhui-secret",
+  "version": "1.2.0",
+  "author": "esri-zhanggy",
   "private": true,
-  "description": "An out-of-box UI solution for enterprise applications",
-  "main": "src/main.js",
+  "description": "安徽非线性加密程序",
+  "main": "dist/main.js",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
@@ -124,7 +124,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "ant_design_pro"
+            "name": "anhui_secret"
           }
         },
         {

@@ -33,7 +33,7 @@ ipcMain.on('openFile', (event, type) => {
     dialog
       .showOpenDialog({
         properties: ['multiSelections'],
-        filters: [{ name: 'Shpfile', extensions: [type] }],
+        filters: [{ name: map.get(type), extensions: [type] }],
       })
       .then(({ canceled, filePaths }) => {
         if (!canceled) {
