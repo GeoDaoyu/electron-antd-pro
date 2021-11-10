@@ -30,7 +30,7 @@ const createWindow = () => {
 };
 
 const startServer = () => {
-  const cwd = isDev ? path.resolve(__dirname, '../public') : path.resolve(app.getPath(), './');
+  const cwd = isDev ? path.resolve(__dirname, '../public') : path.resolve(__dirname, './');
   exec('run.bat', { cwd }, (error, stdout, stderr) => {
     console.log(error, stdout, stderr);
   });

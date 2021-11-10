@@ -37,3 +37,11 @@ yarn package
 ```
 
 打包完在`/out`文件夹下。
+
+把 jar 包和 bat 文件拷贝进 index.html 目录下。
+
+> 不放到 public 下自动打包的原因：jar 包太大，打包时容易内存溢出，导致打包失败。
+
+第一次打包需要如上操作。
+
+之后修改了代码，可以只执行`yarn build`。然后把 dist 文件夹下的内容拷贝到`out\anhui-secret-win32-x64\resources\app\dist`下，不用重新`yarn package`
