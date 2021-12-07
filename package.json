@@ -30,6 +30,7 @@
     "serve": "umi-serve",
     "tsc": "tsc --noEmit",
     "package": "electron-forge package",
+    "package:linux": "electron-forge package --platform linux",
     "make": "electron-forge make"
   },
   "lint-staged": {
