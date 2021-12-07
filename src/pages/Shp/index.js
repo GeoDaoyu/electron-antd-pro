@@ -119,11 +119,11 @@ export default () => {
       if (setting) {
         params.hideFeaturesIdMap = {
           ...params.hideFeaturesIdMap,
-          [path]: setting.hideFieldsNameArray,
+          [path]: setting.hideFeaturesIdArray,
         };
         params.hideFieldsNameMap = {
           ...params.hideFieldsNameMap,
-          [path]: setting.hideFeaturesIdArray,
+          [path]: setting.hideFieldsNameArray,
         };
       }
     });
