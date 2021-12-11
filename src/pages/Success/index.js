@@ -20,7 +20,14 @@ export default () => {
   };
   const getTime = () => {
     const timeEnd = new Date().getTime() - window.time;
-    return moment.duration(timeEnd).locale('zh-cn').humanize();
+    if (timeEnd < 1000 * 60) {
+      return moment.duration(timeEnd).asSeconds().toFixed(2) + '秒';
+    } else if (timeEnd < 1000 * 60 * 60) {
+      return moment.duration(timeEnd).asMinutes().toFixed(2) + '分钟';
+    } else if (timeEnd < 1000 * 60 * 60 * 24) {
+      return moment.duration(timeEnd).asHours().toFixed(2) + '小时';
+    }
+    return moment.duration(timeEnd).asDays().toFixed(2) + '天';
   };
   return (
     <Layout className={styles.layout}>
