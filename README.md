@@ -2,7 +2,7 @@
 
 基于 Ant Design Pro 和 Electron 搭建。前端负责页面和交互、加密逻辑使用 jar 包。
 
-## Environment Prepare
+## 开发环境
 
 Install `node_modules`:
 
@@ -10,13 +10,11 @@ Install `node_modules`:
 yarn
 ```
 
-## Provided Scripts
+### 开发调试
 
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
+先修改package.json里面的main属性为`src/main.js`
 
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
+然后手动启动jar包。
 
 ```bash
 yarn start
@@ -26,7 +24,9 @@ yarn start
 yarn electron
 ```
 
-### Build project
+### 打包部署
+
+先修改package.json里面的main属性为`dist/main.js`
 
 ```bash
 yarn build
@@ -45,3 +45,7 @@ yarn package
 第一次打包需要如上操作。
 
 之后修改了代码，可以只执行`yarn build`。然后把 dist 文件夹下的内容拷贝到`out\anhui-secret-win32-x64\resources\app\dist`下，不用重新`yarn package`
+
+
+
+注意： dist下的main.js来自public下，要手动同步`public`和`src`下的main.js
