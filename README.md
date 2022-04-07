@@ -1,5 +1,6 @@
-# 安徽非线性加密程序
+# Electron桌面程序
 
+加解密程序。
 基于 Ant Design Pro 和 Electron 搭建。前端负责页面和交互、加密逻辑使用 jar 包。
 
 ## 开发环境
